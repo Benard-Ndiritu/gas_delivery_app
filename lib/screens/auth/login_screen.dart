@@ -90,6 +90,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       : const Text('Login', style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
               ),
+              Align(
+                alignment: Alignment.centerRight,
+                 child: TextButton(
+                  onPressed: () => Navigator.pushNamed(context, '/forgot_password'),
+                  child: const Text('Forgot Password?', style: TextStyle(color: Colors.orange)),
+                 )
+              )
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => Navigator.pushNamed(context, '/register'),
