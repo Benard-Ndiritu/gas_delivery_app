@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://127.0.0.1:8000/api';
+  static const String baseUrl = 'https://gas-delivery-backend-ekqu.onrender.com/api';
 
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -35,6 +35,8 @@ class ApiService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'phone_number': phone, 'password': password}),
     );
+    print('STATUS: ${response.statusCode}');
+    print('BODY: ${response.body}');
     return jsonDecode(response.body);
   }
 
@@ -141,4 +143,44 @@ class ApiService {
   );
   return jsonDecode(response.body);
 }
+  static Future<Map<String, dynamic>> requestPasswordResetOTP(String email) async {
+  final response = await http.post(
+    Uri.parse('$baseUrl/users/request-otp/'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'email': email}),
+  );
+  final data = jsonDecode(response.body);
+  return {
+    'success': response.statusCode == 200,
+    'message': data['message'] ?? data['error'],
+  };
+  
+}
+
+static Future<Map<String, dynamic>> verifyPasswordResetOTP(String email, String otp) async {
+  final response = await http.post(
+    Uri.parse('$baseUrl/users/verify-otp/'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'email': email, 'otp': otp}),
+  );
+  final data = jsonDecode(response.body);
+  return {
+    'success': response.statusCode == 200,
+    'message': data['message'] ?? data['error'],
+  };
+}
+
+static Future<Map<String, dynamic>> resetPassword(String email, String otp, String newPassword) async {
+  final response = await http.post(
+    Uri.parse('$baseUrl/users/reset-password/'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'email': email, 'otp': otp, 'new_password': newPassword}),
+  );
+  final data = jsonDecode(response.body);
+  return {
+    'success': response.statusCode == 200,
+    'message': data['message'] ?? data['error'],
+  };
+}
+
 }
