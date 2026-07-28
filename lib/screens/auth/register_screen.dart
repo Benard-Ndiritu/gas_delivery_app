@@ -13,7 +13,6 @@ class _RegisterScreenState extends State<RegisterScreen>
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  String _selectedRole = 'CUSTOMER';
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -86,10 +85,10 @@ class _RegisterScreenState extends State<RegisterScreen>
       final result = await ApiService.register(
         _phoneController.text,
         _passwordController.text,
-        _selectedRole,
+        'CUSTOMER',
       );
 
-      if (result.containsKey('phone_number')) {
+      if (result.containsKey('phone_number') && result['phone_number'] is! List) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -102,9 +101,12 @@ class _RegisterScreenState extends State<RegisterScreen>
         Navigator.pushReplacementNamed(context, '/login');
       } else {
         if (!mounted) return;
+        final error = result['phone_number'] is List
+            ? result['phone_number'][0]
+            : result.toString();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${result.toString()}'),
+            content: Text(error),
             backgroundColor: Colors.red.shade400,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -317,104 +319,6 @@ class _RegisterScreenState extends State<RegisterScreen>
                             ),
                           ),
 
-                          const SizedBox(height: 16),
-
-                          // Role selector
-                          const Text(
-                            'Register as',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () => setState(() => _selectedRole = 'CUSTOMER'),
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    padding: const EdgeInsets.symmetric(vertical: 14),
-                                    decoration: BoxDecoration(
-                                      color: _selectedRole == 'CUSTOMER'
-                                          ? const Color(0xFFFF8C00)
-                                          : const Color(0xFFFFF8F0),
-                                      borderRadius: BorderRadius.circular(14),
-                                      border: Border.all(
-                                        color: _selectedRole == 'CUSTOMER'
-                                            ? const Color(0xFFFF8C00)
-                                            : Colors.grey.shade200,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Icon(
-                                          Icons.person,
-                                          color: _selectedRole == 'CUSTOMER'
-                                              ? Colors.white
-                                              : Colors.grey,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Customer',
-                                          style: TextStyle(
-                                            color: _selectedRole == 'CUSTOMER'
-                                                ? Colors.white
-                                                : Colors.grey,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () => setState(() => _selectedRole = 'DEALER'),
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    padding: const EdgeInsets.symmetric(vertical: 14),
-                                    decoration: BoxDecoration(
-                                      color: _selectedRole == 'DEALER'
-                                          ? const Color(0xFFFF8C00)
-                                          : const Color(0xFFFFF8F0),
-                                      borderRadius: BorderRadius.circular(14),
-                                      border: Border.all(
-                                        color: _selectedRole == 'DEALER'
-                                            ? const Color(0xFFFF8C00)
-                                            : Colors.grey.shade200,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Icon(
-                                          Icons.store,
-                                          color: _selectedRole == 'DEALER'
-                                              ? Colors.white
-                                              : Colors.grey,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Dealer',
-                                          style: TextStyle(
-                                            color: _selectedRole == 'DEALER'
-                                                ? Colors.white
-                                                : Colors.grey,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-
                           const SizedBox(height: 24),
 
                           // Register button
@@ -461,7 +365,63 @@ class _RegisterScreenState extends State<RegisterScreen>
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
+
+                    // Become a dealer banner
+                    GestureDetector(
+                      onTap: () => Navigator.pushNamed(context, '/dealer_apply'),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.orange.shade200),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.orange.withOpacity(0.08),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 45,
+                              height: 45,
+                              decoration: BoxDecoration(
+                                color: Colors.orange.shade50,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(Icons.store, color: Colors.orange),
+                            ),
+                            const SizedBox(width: 12),
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Want to sell gas?',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: Color(0xFF1A1A1A),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Apply to become a dealer',
+                                    style: TextStyle(color: Colors.grey, fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.chevron_right, color: Colors.orange),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
 
                     // Login link
                     Row(
