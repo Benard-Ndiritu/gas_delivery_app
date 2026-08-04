@@ -6,7 +6,7 @@ import 'package:gas_delivery_app/screens/dealer/dealer_home_screen.dart';
 import 'package:gas_delivery_app/screens/auth/forgot_password_screen.dart';
 import 'package:gas_delivery_app/screens/auth/verify_otp_screen.dart';
 import 'package:gas_delivery_app/screens/auth/reset_password_screen.dart';
-import 'package:gas_delivery_app/screens/auth/dealer_apply_screen.dart';
+import 'screens/auth/dealer_apply_screen.dart';
 
 void main() {
   runApp(const MyApp());

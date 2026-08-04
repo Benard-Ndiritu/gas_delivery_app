@@ -86,6 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         _phoneController.text,
         _passwordController.text,
         'CUSTOMER',
+        email: _emailController.text,
       );
 
       if (result.containsKey('phone_number') && result['phone_number'] is! List) {
@@ -245,6 +246,28 @@ class _RegisterScreenState extends State<RegisterScreen>
                             decoration: InputDecoration(
                               labelText: 'Phone Number',
                               prefixIcon: const Icon(Icons.phone, color: Colors.orange),
+                              filled: true,
+                              fillColor: const Color(0xFFFFF8F0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: const BorderSide(color: Colors.orange, width: 1.5),
+                              ),
+                              labelStyle: const TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                          
+                          final _emailController = TextEditingController();
+                          const SizedBox(height: 16),
+                          TextField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              labelText: 'Email Address (for password reset)',
+                              prefixIcon: const Icon(Icons.email, color: Colors.orange),
                               filled: true,
                               fillColor: const Color(0xFFFFF8F0),
                               border: OutlineInputBorder(

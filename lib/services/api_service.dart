@@ -43,7 +43,9 @@ class ApiService {
   static Future<Map<String, dynamic>> register(
     String phone,
     String password,
-    String role,
+    String role, {
+    String? email,
+  }
   ) async {
     final response = await http.post(
       Uri.parse('$baseUrl/users/register/'),
@@ -52,6 +54,7 @@ class ApiService {
         'phone_number': phone,
         'password': password,
         'role': role,
+        if (email != null && email.isNotEmpty) 'email': email,
       }),
     );
     return jsonDecode(response.body);
@@ -179,6 +182,33 @@ static Future<Map<String, dynamic>> resetPassword(String email, String otp, Stri
   final data = jsonDecode(response.body);
   return {
     'success': response.statusCode == 200,
+    'message': data['message'] ?? data['error'],
+  };
+}
+
+static Future<Map<String, dynamic>> applyAsDealer({
+  required String phoneNumber,
+  required String password,
+  required String name,
+  required String shopName,
+  required int deliveryRadius,
+  required string email,
+}) async {
+  final response = await http.post(
+    Uri.parse('$baseUrl/dealers/apply/'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'phone_number': phoneNumber,
+      'password': password,
+      'name': name,
+      'shop_name': shopName,
+      'delivery_radius': deliveryRadius,
+      'email': email,
+    }),
+  );
+  final data = jsonDecode(response.body);
+  return {
+    'success': response.statusCode == 201,
     'message': data['message'] ?? data['error'],
   };
 }
