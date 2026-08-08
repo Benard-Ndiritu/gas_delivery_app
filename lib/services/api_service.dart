@@ -173,6 +173,15 @@ static Future<Map<String, dynamic>> verifyPasswordResetOTP(String email, String 
   };
 }
 
+static Future<Map<String, dynamic>> getDealerProfile() async {
+  final token = await getToken();
+  final response = await http.get(
+    Uri.parse('$baseUrl/dealers/application/status/'),
+    headers: {'Authorization': 'Bearer $token'},
+  );
+  return jsonDecode(response.body);
+}
+
 static Future<Map<String, dynamic>> resetPassword(String email, String otp, String newPassword) async {
   final response = await http.post(
     Uri.parse('$baseUrl/users/reset-password/'),
