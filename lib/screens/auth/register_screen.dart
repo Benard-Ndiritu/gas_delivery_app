@@ -262,7 +262,6 @@ class _RegisterScreenState extends State<RegisterScreen>
                             ),
                           ),
                           
-                          final _emailController = TextEditingController();
                           const SizedBox(height: 16),
                           TextField(
                             controller: _emailController,
