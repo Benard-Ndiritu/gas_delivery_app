@@ -15,6 +15,7 @@ class _DealerApplyScreenState extends State<DealerApplyScreen>
   final _confirmPasswordController = TextEditingController();
   final _nameController = TextEditingController();
   final _shopNameController = TextEditingController();
+  final _emailController = TextEditingController();
   int _deliveryRadius = 5;
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -47,6 +48,7 @@ class _DealerApplyScreenState extends State<DealerApplyScreen>
     _confirmPasswordController.dispose();
     _nameController.dispose();
     _shopNameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -86,6 +88,7 @@ class _DealerApplyScreenState extends State<DealerApplyScreen>
         name: _nameController.text,
         shopName: _shopNameController.text,
         deliveryRadius: _deliveryRadius,
+        email: _emailController.text,
       );
 
       if (!mounted) return;
@@ -278,6 +281,14 @@ class _DealerApplyScreenState extends State<DealerApplyScreen>
                             label: 'Phone Number',
                             icon: Icons.phone,
                             keyboardType: TextInputType.phone,
+                          ),
+                          const SizedBox(height: 16),
+
+                          _buildTextField(
+                            controller: _emailController,
+                            label: 'Email Address',
+                            icon: Icons.email,
+                            keyboardType: TextInputType.emailAddress,
                           ),
                           const SizedBox(height: 16),
 

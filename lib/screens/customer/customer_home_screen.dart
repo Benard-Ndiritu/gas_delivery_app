@@ -50,7 +50,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Orders'),
         ],
       ),
     );
@@ -172,7 +171,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
                   _HowItWorksCard(step: '1', title: 'Place Order', description: 'Choose your gas type and place an order', icon: Icons.shopping_cart),
                   _HowItWorksCard(step: '2', title: 'Dealer Accepts', description: 'A nearby dealer accepts your order', icon: Icons.store),
                   _HowItWorksCard(step: '3', title: 'Delivery', description: 'Gas is delivered to your location', icon: Icons.delivery_dining),
-                  _HowItWorksCard(step: '4', title: 'Pay', description: 'Pay via M-Pesa on delivery', icon: Icons.payment),
+                  _HowItWorksCard(step: '4', title: 'Pay', description: 'Payment is on delivery', icon: Icons.payment),
                 ],
               ),
             ),

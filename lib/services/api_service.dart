@@ -201,7 +201,7 @@ static Future<Map<String, dynamic>> applyAsDealer({
   required String name,
   required String shopName,
   required int deliveryRadius,
-  required String email,  // String not string
+  String email = '',
 }) async {
   final response = await http.post(
     Uri.parse('$baseUrl/dealers/apply/'),
@@ -212,7 +212,6 @@ static Future<Map<String, dynamic>> applyAsDealer({
       'name': name,
       'shop_name': shopName,
       'delivery_radius': deliveryRadius,
-      'email': email,
     }),
   );
   final data = jsonDecode(response.body);

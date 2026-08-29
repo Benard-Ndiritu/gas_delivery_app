@@ -267,7 +267,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
-                              labelText: 'Email Address (for password reset)',
+                              labelText: 'Email Address',
                               prefixIcon: const Icon(Icons.email, color: Colors.orange),
                               filled: true,
                               fillColor: const Color(0xFFFFF8F0),
