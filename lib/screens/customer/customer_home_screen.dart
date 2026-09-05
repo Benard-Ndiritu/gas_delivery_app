@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
 import 'place_order_screen.dart';
-import 'order_history_screen.dart';
 
 class CustomerHomeScreen extends StatefulWidget {
   const CustomerHomeScreen({super.key});
@@ -39,7 +38,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
       backgroundColor: const Color(0xFFFFF8F0),
       body: FadeTransition(
         opacity: _fadeAnimation,
-        child: _currentIndex == 0 ? _buildHome() : const OrderHistoryScreen(),
+        child: _currentIndex == 0 ? _buildHome() : _buildSupport(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -50,6 +49,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.help_outline), label: 'Support'),
         ],
       ),
     );
@@ -61,7 +61,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Container(
               padding: const EdgeInsets.all(24),
               decoration: const BoxDecoration(
@@ -99,7 +98,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
                     ],
                   ),
                   const SizedBox(height: 20),
-                  // Order gas card
                   GestureDetector(
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlaceOrderScreen())),
                     child: Container(
@@ -132,7 +130,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
 
             const SizedBox(height: 24),
 
-            // Quick actions
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
@@ -158,14 +155,13 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
                           title: 'My Orders',
                           subtitle: 'Track orders',
                           color: Colors.blue,
-                          onTap: () => setState(() => _currentIndex = 1),
+                          onTap: () => Navigator.pushNamed(context, '/order_history'),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 24),
 
-                  // How it works
                   const Text('How It Works', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A))),
                   const SizedBox(height: 16),
                   _HowItWorksCard(step: '1', title: 'Place Order', description: 'Choose your gas type and place an order', icon: Icons.shopping_cart),
@@ -178,6 +174,94 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
             const SizedBox(height: 30),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSupport() {
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Support & Help', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A))),
+            const SizedBox(height: 8),
+            const Text('How can we help you?', style: TextStyle(color: Colors.grey)),
+            const SizedBox(height: 24),
+
+            _supportCard(icon: Icons.phone, title: 'Call Us', subtitle: '+254 700 000 000', onTap: () {}),
+            _supportCard(icon: Icons.email, title: 'Email Us', subtitle: 'support@gasdelivery.com', onTap: () {}),
+            _supportCard(icon: Icons.chat_bubble_outline, title: 'WhatsApp', subtitle: 'Chat with us on WhatsApp', onTap: () {}),
+
+            const SizedBox(height: 24),
+            const Text('FAQs', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A))),
+            const SizedBox(height: 16),
+
+            _faqCard('How do I place an order?', 'Tap "Order Gas" on the home screen, select your gas type and confirm your location.'),
+            _faqCard('How long does delivery take?', 'Delivery typically takes 30-60 minutes depending on your location and dealer availability.'),
+            _faqCard('How do I pay?', 'Payment is made via M-Pesa after your order is delivered.'),
+            _faqCard('Can I cancel an order?', 'Yes, you can cancel a pending order from the My Orders screen.'),
+            _faqCard('What if no dealer is available?', 'Try again later or contact support for assistance.'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _supportCard({required IconData icon, required String title, required String subtitle, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.07), blurRadius: 10, offset: const Offset(0, 4))],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+              child: Icon(icon, color: Colors.orange),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  Text(subtitle, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _faqCard(String question, String answer) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.07), blurRadius: 10, offset: const Offset(0, 4))],
+      ),
+      child: ExpansionTile(
+        title: Text(question, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+        iconColor: Colors.orange,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Text(answer, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+          ),
+        ],
       ),
     );
   }
@@ -207,9 +291,7 @@ class _QuickActionCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(color: Colors.grey.withOpacity(0.08), blurRadius: 10, offset: const Offset(0, 4)),
-          ],
+          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.08), blurRadius: 10, offset: const Offset(0, 4))],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,10 +299,7 @@ class _QuickActionCard extends StatelessWidget {
             Container(
               width: 44,
               height: 44,
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
+              decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
               child: Icon(icon, color: color, size: 24),
             ),
             const SizedBox(height: 12),
@@ -254,19 +333,14 @@ class _HowItWorksCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(color: Colors.grey.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4)),
-        ],
+        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: Row(
         children: [
           Container(
             width: 36,
             height: 36,
-            decoration: BoxDecoration(
-              color: Colors.orange,
-              borderRadius: BorderRadius.circular(10),
-            ),
+            decoration: BoxDecoration(color: Colors.orange, borderRadius: BorderRadius.circular(10)),
             child: Center(child: Text(step, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
           ),
           const SizedBox(width: 14),

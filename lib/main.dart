@@ -7,6 +7,7 @@ import 'package:gas_delivery_app/screens/auth/forgot_password_screen.dart';
 import 'package:gas_delivery_app/screens/auth/verify_otp_screen.dart';
 import 'package:gas_delivery_app/screens/auth/reset_password_screen.dart';
 import 'screens/auth/dealer_apply_screen.dart';
+import 'screens/customer/order_history_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         '/verify_otp': (context) => VerifyOTPScreen(),
         '/reset_password': (context) => ResetPasswordScreen(),
         '/dealer_apply': (context) => DealerApplyScreen(),
+        '/order_history': (context) => const OrderHistoryScreen(),
       },
     );
   }
