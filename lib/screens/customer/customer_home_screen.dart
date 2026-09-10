@@ -190,7 +190,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
             const Text('How can we help you?', style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 24),
 
-            _supportCard(icon: Icons.phone, title: 'Call Us', subtitle: '+254 700 000 000', onTap: () {}),
+            _supportCard(icon: Icons.phone, title: 'Call Us', subtitle: '+254 796820460', onTap: () {}),
             _supportCard(icon: Icons.email, title: 'Email Us', subtitle: 'support@gasdelivery.com', onTap: () {}),
             _supportCard(icon: Icons.chat_bubble_outline, title: 'WhatsApp', subtitle: 'Chat with us on WhatsApp', onTap: () {}),
 
@@ -200,7 +200,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
 
             _faqCard('How do I place an order?', 'Tap "Order Gas" on the home screen, select your gas type and confirm your location.'),
             _faqCard('How long does delivery take?', 'Delivery typically takes 30-60 minutes depending on your location and dealer availability.'),
-            _faqCard('How do I pay?', 'Payment is made via M-Pesa after your order is delivered.'),
+            _faqCard('How do I pay?', 'Payment is made via M-Pesa or cash after your order is delivered.'),
             _faqCard('Can I cancel an order?', 'Yes, you can cancel a pending order from the My Orders screen.'),
             _faqCard('What if no dealer is available?', 'Try again later or contact support for assistance.'),
           ],
