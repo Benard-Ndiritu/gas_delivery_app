@@ -1,5 +1,5 @@
 name: gas_delivery_app
-description: "A new Flutter project."
+description: "Cooking gas delivery app for customers and dealers."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -36,9 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   http: ^1.6.0
   shared_preferences: ^2.5.4
-  provider: ^6.1.5+1
   geolocator: ^14.0.2
-  google_maps_flutter: ^2.14.2
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:

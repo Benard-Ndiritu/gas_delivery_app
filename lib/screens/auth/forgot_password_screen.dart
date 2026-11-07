@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../../services/api_service.dart';
+import '../../widgets/common.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -12,86 +14,51 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
   bool _isLoading = false;
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
   Future<void> _requestOTP() async {
-    if (_emailController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter your email')),
-      );
+    final email = _emailController.text.trim();
+    if (email.isEmpty) {
+      showAppSnack(context, 'Please enter your email', error: true);
       return;
     }
-
+    FocusScope.of(context).unfocus();
     setState(() => _isLoading = true);
-    try {
-      final result = await ApiService.requestPasswordResetOTP(_emailController.text);
-      if (!mounted) return;
-      if (result['success']) {
-        Navigator.pushNamed(context, '/verify_otp', arguments: _emailController.text);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'] ?? 'Something went wrong')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
+    final result = await ApiService.requestPasswordResetOTP(email);
+    if (!mounted) return;
     setState(() => _isLoading = false);
+    if (result['success'] == true) {
+      Navigator.pushNamed(context, '/verify_otp', arguments: email);
+    } else {
+      showAppSnack(context, result['message']?.toString() ?? 'Something went wrong', error: true);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text('Forgot Password', style: TextStyle(color: Colors.black)),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.lock_reset, size: 80, color: Colors.orange),
-              const SizedBox(height: 16),
-              const Text(
-                'Reset Password',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Enter your email address and we will send you an OTP to reset your password.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 40),
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Email Address',
-                  prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _requestOTP,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Send OTP', style: TextStyle(fontSize: 18, color: Colors.white)),
-                ),
-              ),
-            ],
+    return AuthScaffold(
+      heroIcon: Icons.lock_reset_rounded,
+      title: 'Forgot your password?',
+      subtitle: "Enter the email on your account and we'll send you a 6-digit code.",
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppTextField(
+            controller: _emailController,
+            label: 'Email address',
+            icon: Icons.alternate_email_rounded,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.done,
+            autofillHints: const [AutofillHints.email],
+            onSubmitted: (_) => _requestOTP(),
           ),
-        ),
+          const SizedBox(height: 24),
+          GradientButton(label: 'Send code', icon: Icons.send_rounded, loading: _isLoading, onPressed: _requestOTP),
+        ],
       ),
     );
   }

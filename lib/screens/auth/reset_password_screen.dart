@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../../services/api_service.dart';
+import '../../widgets/common.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -13,110 +15,67 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
 
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
   Future<void> _resetPassword() async {
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
-    final email = args['email']!;
-    final otp = args['otp']!;
 
     if (_passwordController.text.isEmpty || _confirmPasswordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields')),
-      );
+      showAppSnack(context, 'Please fill in both fields', error: true);
       return;
     }
-
     if (_passwordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
-      );
+      showAppSnack(context, 'Passwords do not match', error: true);
       return;
     }
 
+    FocusScope.of(context).unfocus();
     setState(() => _isLoading = true);
-    try {
-      final result = await ApiService.resetPassword(email, otp, _passwordController.text);
-      if (!mounted) return;
-      if (result['success']) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Password reset successfully!')),
-        );
-        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'] ?? 'Something went wrong')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
+    final result = await ApiService.resetPassword(args['email']!, args['otp']!, _passwordController.text);
+    if (!mounted) return;
     setState(() => _isLoading = false);
+    if (result['success'] == true) {
+      showAppSnack(context, 'Password updated. Sign in with your new password.', success: true);
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    } else {
+      showAppSnack(context, result['message']?.toString() ?? 'Something went wrong', error: true);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text('New Password', style: TextStyle(color: Colors.black)),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.lock_open, size: 80, color: Colors.orange),
-              const SizedBox(height: 16),
-              const Text(
-                'Set New Password',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Your new password must be different from your previous password.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 40),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'New Password',
-                  prefixIcon: Icon(Icons.lock),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _confirmPasswordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Confirm Password',
-                  prefixIcon: Icon(Icons.lock_outline),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _resetPassword,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Reset Password', style: TextStyle(fontSize: 18, color: Colors.white)),
-                ),
-              ),
-            ],
+    return AuthScaffold(
+      heroIcon: Icons.key_rounded,
+      title: 'Set a new password',
+      subtitle: 'Choose something you haven\'t used before. At least 8 characters, not only numbers.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppTextField(
+            controller: _passwordController,
+            label: 'New password',
+            icon: Icons.lock_outline_rounded,
+            isPassword: true,
+            textInputAction: TextInputAction.next,
+            autofillHints: const [AutofillHints.newPassword],
           ),
-        ),
+          const SizedBox(height: 16),
+          AppTextField(
+            controller: _confirmPasswordController,
+            label: 'Confirm new password',
+            icon: Icons.lock_outline_rounded,
+            isPassword: true,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) => _resetPassword(),
+          ),
+          const SizedBox(height: 24),
+          GradientButton(label: 'Update password', loading: _isLoading, onPressed: _resetPassword),
+        ],
       ),
     );
   }
